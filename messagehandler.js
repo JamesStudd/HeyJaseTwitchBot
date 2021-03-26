@@ -8,6 +8,9 @@ const util = require("./utils");
 let jaseGuess = new JaseGuess();
 
 const IGNORE = ["nightbot"];
+const GUESS_ENDER = ["hey_jase"];
+const RESULT_ACCEPTER = ["homida"];
+const RESULT_STRING = "answer:";
 
 let timer;
 let messageThresholdTimer;
@@ -18,10 +21,7 @@ function ShouldIgnoreMessage(tags) {
 }
 
 function ShouldStopGuesses(tags, message) {
-	return (
-		(tags.username === "homida" && message === ":)") ||
-		(tags.username === "hey_jase" && message.indexOf("http") === -1)
-	);
+	return message.indexOf("http") && GUESS_ENDER.indexOf(tags.username) !== -1;
 }
 
 function ShouldProcessBacklog() {
@@ -29,33 +29,32 @@ function ShouldProcessBacklog() {
 		jaseGuess.guessBacklog.length >= GUESS_CONFIG.GUESS_THRESHOLD_AMOUNT &&
 		jaseGuess.guessBacklog.filter(
 			(guess) =>
-				ProcessMessage(guess.tags, guess.message).messageContainedGuess
+				ProcessMessage(guess.tags, guess.message, false)
+					.messageContainedGuess
 		).length >= GUESS_CONFIG.GUESS_THRESHOLD_AMOUNT_CORRECT
 	);
 }
 
-function ProcessMessage(tags, rawMessage) {
+function ShouldAcceptMessageAsAnswer(tags, message) {
+	if (
+		RESULT_ACCEPTER.indexOf(tags.username) !== -1 &&
+		message.indexOf(RESULT_STRING) !== -1
+	) {
+		const processed = ProcessMessage(tags, message, false);
+		if (processed.messageContainedGuess) {
+			return processed.guessAmount;
+		}
+	}
+}
+
+function ProcessMessage(tags, rawMessage, checkSpecialCases = true) {
 	let args = rawMessage.split(" ");
 	let messageContainedGuess = false;
 	let guessAmount = 0;
 
 	for (const arg of args) {
-		jaseGuess.CheckSpecialCases(arg);
-
-		if (arg === "mimic") {
-			console.log(`Received a mimic guess from ${tags.username}`);
-			mimicGuesses++;
-		} else if (
-			arg === "bloodhound" ||
-			arg === "bh" ||
-			arg === "dog" ||
-			arg === "doggo" ||
-			arg === "dogggo" ||
-			arg === "pet"
-		) {
-			bloodhoundGuesses++;
-		} else if (arg === "jaseCasket") {
-			jaseCaskets++;
+		if (checkSpecialCases) {
+			jaseGuess.CheckSpecialCases(arg, tags.id);
 		}
 
 		let res = util.ParseUserInputToNumber(arg);
@@ -68,11 +67,19 @@ function ProcessMessage(tags, rawMessage) {
 }
 
 exports.HandleMessage = function HandleMessage(channel, tags, message, self) {
-	console.log(message, tags);
 	if (ShouldIgnoreMessage(tags)) return;
+	if (!canProcessGuesses) {
+		const result = ShouldAcceptMessageAsAnswer(tags, message);
+		if (result) {
+			const fileName = util.GetMostRecentFileName("guesses");
+			util.ProcessResult(fileName, result);
+		}
+	}
 	if (ShouldStopGuesses(tags, message)) {
 		if (jaseGuess.HasGuesses()) {
+			canProcessGuesses = false;
 			clearTimeout(timer);
+			jaseGuess.seconds = seconds;
 			jaseGuess.writeToFile();
 			jaseGuess.ResetFully();
 		}
@@ -107,7 +114,7 @@ exports.HandleMessage = function HandleMessage(channel, tags, message, self) {
 					);
 					setInterval(() => seconds++, 1000);
 				} else {
-					guessBacklog = [];
+					jaseGuess.ClearBacklog();
 				}
 				messageThresholdTimer = undefined;
 			}, 5000);

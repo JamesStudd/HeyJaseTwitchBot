@@ -7,6 +7,7 @@ module.exports = class JaseGuess {
 	constructor() {
 		this.amount = 0;
 		this.guesses = 0;
+		this.smallAmount = 0;
 		this.normalUserGuesses = 0;
 		this.subUserGuesses = 0;
 		this.modUserGuesses = 0;
@@ -32,19 +33,16 @@ module.exports = class JaseGuess {
 
 		this.specialCases = [
 			{
-				stat: this.mimicGuesses,
 				title: "Mimic",
 				input: ["mimic", "Mimic"],
 				guessedThisMessage: false,
 			},
 			{
-				stat: this.bloodhoundGuesses,
 				title: "Bloodhound",
 				input: ["bloodhound", "bh", "dog", "doggo", "dogggo", "pet"],
 				guessedThisMessage: false,
 			},
 			{
-				stat: this.jaseCaskets,
 				title: "Casket",
 				input: ["jaseCasket"],
 				guessedThisMessage: false,
@@ -78,6 +76,7 @@ module.exports = class JaseGuess {
 	GetFirstGuessTime = () => this.guessBacklog[0].time;
 
 	writeToFile() {
+		const todayDate = new Date();
 		let result = JSON.stringify(
 			{
 				result: this.allGuesses,
@@ -96,20 +95,31 @@ module.exports = class JaseGuess {
 				seconds: this.seconds,
 				bloodhoundGuesses: this.bloodhoundGuesses,
 				jaseCaskets: this.jaseCaskets,
+				mimics: this.mimicGuesses,
+				date: todayDate,
 			},
 			null,
 			2
 		);
-		fs.writeFile("./guesses.json", result, (err) => {
-			if (err) {
-				console.log("Failed to write to file");
-				console.error(err);
+
+		const fileName = `guesses-${util.GetSafeDateFormat(todayDate)}.json`;
+
+		fs.writeFile(
+			path.join(__dirname, "guesses", fileName),
+			result,
+			(err) => {
+				if (err) {
+					console.log("Failed to write to file");
+					console.error(err);
+				}
+				console.log(
+					`-------- Finished recording guesses (${todayDate.toString()}), saved file -----------`
+				);
+				if (CONFIG.DEBUG_LOG) {
+					console.log(result);
+				}
 			}
-			console.log(
-				"-------- Finished recording guesses, saved file -----------"
-			);
-			console.log(result);
-		});
+		);
 		return result;
 	}
 
@@ -119,9 +129,12 @@ module.exports = class JaseGuess {
 		if (amountToAdd <= CONFIG.BIG_NUMBER_IGNORE) {
 			this.smallAmount += amountToAdd;
 		}
-		console.log(
-			`Received a guess from ${tags.username} for ${amountToAdd}. Message: ${rawMessage}`
-		);
+
+		if (CONFIG.DEBUG_LOG) {
+			console.log(
+				`Received a guess from ${tags.username} for ${amountToAdd}. Message: ${rawMessage}`
+			);
+		}
 
 		this.allGuesses.push({
 			user: tags.username,
@@ -140,5 +153,30 @@ module.exports = class JaseGuess {
 		}
 	}
 
-	CheckSpecialCases(arg) {}
+	CheckSpecialCases(arg, messageId) {
+		if (messageId !== this.cacheId) {
+			this.specialCases.forEach((sCase) => {
+				sCase.guessedThisMessage = false;
+			});
+		}
+
+		for (const specialCase of this.specialCases) {
+			if (specialCase.guessedThisMessage) continue;
+			for (const word of specialCase.input) {
+				if (arg === word) {
+					specialCase.guessedThisMessage = true;
+
+					if (specialCase.title === "Mimic") {
+						this.mimicGuesses++;
+					} else if (specialCase.title === "Bloodhound") {
+						this.bloodhoundGuesses++;
+					} else if (specialCase.title === "Casket") {
+						this.jaseCaskets++;
+					}
+
+					break;
+				}
+			}
+		}
+	}
 };

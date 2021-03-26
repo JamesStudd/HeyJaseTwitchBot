@@ -29,66 +29,6 @@ let allGuesses = [];
 let guessBacklog = [];
 let canProcessGuesses = false;
 
-function PrintResult(data, actualAmount) {
-	const {
-		result,
-		totalGuesses,
-		totalAmount,
-		totalSmallAmount,
-		averageGuess,
-		averageSmallGuess,
-		infoGuesses,
-		mimicGuesses,
-		seconds,
-		bloodhoundGuesses,
-		jaseCaskets,
-	} = data;
-
-	let winner = "";
-	let bestDiff = Number.MAX_VALUE;
-	let rawGuess;
-
-	for (const guess of result) {
-		let diff = Math.abs(guess.amount - actualAmount);
-		if (diff < bestDiff) {
-			bestDiff = diff;
-			winner = guess.user;
-			rawGuess = guess.raw;
-		}
-	}
-
-	let mimicGuessString =
-		mimicGuesses === 0
-			? "Nobody guessed mimic"
-			: mimicGuesses > 1
-			? `${mimicGuesses} people guessed mimic`
-			: "1 person guessed mimic";
-	let bhGuessString =
-		bloodhoundGuesses === 0
-			? "Nobody guessed bloodhound"
-			: bloodhoundGuesses > 1
-			? `${bloodhoundGuesses} people guessed bloodhound`
-			: "1 person guessed bloodhound";
-
-	let jaseCasketString =
-		jaseCaskets === 0
-			? "Nobody said jaseCasket jaseGrumpy"
-			: jaseCaskets > 1
-			? `${jaseCaskets} jaseCasket were said`
-			: "1 person said jaseCasket jaseWow";
-
-	let post = `Guesses over! The winner is ${winner} with a guess of ${rawGuess}. In ${Math.ceil(
-		seconds
-	)} seconds there were ${totalGuesses} total guesses, adding up to ${totalAmount}. Average guess was ${averageGuess}. Ignoring guesses over 100m, they added up to ${totalSmallAmount} with an average of ${averageSmallGuess}. ${
-		infoGuesses.mod
-	} ${infoGuesses.mod > 1 ? "mods" : "mod"}, ${infoGuesses.sub} subs and ${
-		infoGuesses.normal
-	} non-subs guessed. ${mimicGuessString}. ${bhGuessString}. ${jaseCasketString}.`;
-
-	console.log(post);
-	return post;
-}
-
 client.on("message", (channel, tags, message, self) => {
 	if (tags.username === "nightbot") return;
 
@@ -307,17 +247,6 @@ app.get("/", (req, res) => {
 
 app.post("/amount", (req, res) => {
 	if (req.body.amount) {
-		fs.readFile("./guesses.json", "utf8", (err, data) => {
-			if (err) {
-				console.log("Failed to read file");
-				return console.error(err);
-			}
-
-			PrintResult(
-				JSON.parse(data),
-				ParseUserInputToNumber(req.body.amount)
-			);
-		});
 	}
 	res.sendFile(path.join(__dirname, "public", "index.html"));
 });
