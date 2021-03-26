@@ -10,4 +10,8 @@ module.exports.CONFIG = {
 	SHORT_SPLIT_REGEX: /(^\d+)[,.]?(\d+)([k|m|b])$/,
 	DATE_REGEX: /\s+|[,\/:]/g,
 	DEBUG_LOG: shouldLog,
+	RESULT_STRING: "answer:",
+	IGNORE: ["nightbot"],
+	GUESS_ENDER: ["hey_jase"],
+	RESULT_ACCEPTER: ["homida"],
 };

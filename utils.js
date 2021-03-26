@@ -5,6 +5,7 @@ const path = require("path");
 const _ = require("underscore");
 
 function ConvertToFormat(number) {
+	if (isNaN(number) || number <= 0) return 0;
 	// Nine Zeroes for Billions
 	return Math.abs(Number(number)) >= 1.0e9
 		? (Math.abs(Number(number)) / 1.0e9).toFixed(2) + "B"
@@ -29,6 +30,11 @@ function ParseUserInputToNumber(arg) {
 		b: 1000000000,
 	};
 
+	if (typeof arg === "number") return arg;
+	if (typeof arg !== "string" || arg === "") return 0;
+
+	arg = arg.toLowerCase();
+
 	let strippedGold = arg.replace(/[.,gp]/g, "").toLowerCase();
 
 	if (CONFIG.MONEY_REGEX.test(strippedGold)) {
@@ -48,9 +54,11 @@ function ParseUserInputToNumber(arg) {
 			return parsed * multiplier[letter];
 		}
 	}
+	return 0;
 }
 
 function GetSafeDateFormat(date) {
+	if (!(date instanceof Date)) return "Invalid-Date";
 	return date.toLocaleString().replace(CONFIG.DATE_REGEX, "-");
 }
 
@@ -92,6 +100,26 @@ module.exports = {
 	ProcessResult,
 };
 
+function GuessToString(
+	stat,
+	keyword,
+	fluffNobody = "",
+	fluffOne = "",
+	fluffMany = ""
+) {
+	return stat === 0
+		? `Nobody said ${keyword}${fluffNobody}`
+		: stat > 1
+		? `${stat} people said ${keyword}${fluffMany}`
+		: `1 person said ${keyword}${fluffOne}`;
+}
+
+function TypeOfUserToString(typeOfUser, count) {
+	return count > 1 || count === 0
+		? `${count} ${typeOfUser}s`
+		: `${count} ${typeOfUser}`;
+}
+
 function PrintResult(data, actualAmount) {
 	const {
 		result,
@@ -100,7 +128,6 @@ function PrintResult(data, actualAmount) {
 		totalSmallAmount,
 		averageGuess,
 		averageSmallGuess,
-		infoGuesses,
 		mimicGuesses,
 		seconds,
 		bloodhoundGuesses,
@@ -123,31 +150,28 @@ function PrintResult(data, actualAmount) {
 		}
 	}
 
-	let mimicGuessString =
-		mimicGuesses === 0
-			? "Nobody guessed mimic"
-			: mimicGuesses > 1
-			? `${mimicGuesses} people guessed mimic`
-			: "1 person guessed mimic";
-	let bhGuessString =
-		bloodhoundGuesses === 0
-			? "Nobody guessed bloodhound"
-			: bloodhoundGuesses > 1
-			? `${bloodhoundGuesses} people guessed bloodhound`
-			: "1 person guessed bloodhound";
+	let mimicGuessString = GuessToString(mimicGuesses, "mimic");
+	let bhGuessString = GuessToString(bloodhoundGuesses, "bloodhound");
+	let jaseCasketString = GuessToString(
+		jaseCaskets,
+		"jaseCasket",
+		" jaseGrumpy",
+		" jaseWow",
+		""
+	);
 
-	let jaseCasketString =
-		jaseCaskets === 0
-			? "Nobody said jaseCasket jaseGrumpy"
-			: jaseCaskets > 1
-			? `${jaseCaskets} jaseCasket were said`
-			: "1 person said jaseCasket jaseWow";
+	let modString = TypeOfUserToString("mod", modUserGuesses);
+	let subString = TypeOfUserToString("sub", subUserGuesses);
+	let nonSubString = TypeOfUserToString("non-sub", normalUserGuesses);
 
-	let post = `Guesses over! The winner is ${winner} with a guess of "${rawGuess}". In ${Math.ceil(
-		seconds
-	)} seconds there were ${totalGuesses} total guesses, adding up to ${totalAmount}. Average guess was ${averageGuess}. Ignoring guesses over 100m, they added up to ${totalSmallAmount} with an average of ${averageSmallGuess}. ${modUserGuesses} ${
-		modUserGuesses > 1 ? "mods" : "mod"
-	}, ${subUserGuesses} subs and ${normalUserGuesses} non-subs guessed. ${mimicGuessString}. ${bhGuessString}. ${jaseCasketString}.`;
+	let secondsRounded = Math.ceil(seconds);
+
+	let post =
+		`Guesses over! The winner is ${winner} with a guess of "${rawGuess}". ` +
+		`In ${secondsRounded} seconds there were ${totalGuesses} total guesses, adding up to ${totalAmount}. ` +
+		`Average guess was ${averageGuess}. Ignoring guesses over 100m, they added up to ${totalSmallAmount} with an average of ${averageSmallGuess}. ` +
+		`${modString}, ${subString} and ${nonSubString} guessed. ` +
+		`${mimicGuessString}. ${bhGuessString}. ${jaseCasketString}.`;
 
 	console.log(post);
 }

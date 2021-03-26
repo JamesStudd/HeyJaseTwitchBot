@@ -7,21 +7,19 @@ const util = require("./utils");
 
 let jaseGuess = new JaseGuess();
 
-const IGNORE = ["nightbot"];
-const GUESS_ENDER = ["hey_jase"];
-const RESULT_ACCEPTER = ["homida"];
-const RESULT_STRING = "answer:";
-
 let timer;
 let messageThresholdTimer;
 let canProcessGuesses = false;
 
 function ShouldIgnoreMessage(tags) {
-	return IGNORE.indexOf(tags.username) !== -1;
+	return GUESS_CONFIG.IGNORE.indexOf(tags.username) !== -1;
 }
 
 function ShouldStopGuesses(tags, message) {
-	return message.indexOf("http") && GUESS_ENDER.indexOf(tags.username) !== -1;
+	return (
+		message.indexOf("http") &&
+		GUESS_CONFIG.GUESS_ENDER.indexOf(tags.username) !== -1
+	);
 }
 
 function ShouldProcessBacklog() {
@@ -37,8 +35,8 @@ function ShouldProcessBacklog() {
 
 function ShouldAcceptMessageAsAnswer(tags, message) {
 	if (
-		RESULT_ACCEPTER.indexOf(tags.username) !== -1 &&
-		message.indexOf(RESULT_STRING) !== -1
+		GUESS_CONFIG.RESULT_ACCEPTER.indexOf(tags.username) !== -1 &&
+		message.indexOf(GUESS_CONFIG.RESULT_STRING) !== -1
 	) {
 		const processed = ProcessMessage(tags, message, false);
 		if (processed.messageContainedGuess) {
