@@ -1,1 +1,70 @@
-{"result":[{"user":"jardi","amount":338000,"raw":"338k"},{"user":"maxl1fe","amount":476000,"raw":"476k"},{"user":"slayalldayosrs","amount":556000,"raw":"556k"},{"user":"raniel11","amount":334000,"raw":"334k"},{"user":"dirttosoil","amount":404000,"raw":"404k"},{"user":"kingcarles5","amount":598000,"raw":"598k"},{"user":"kudatzky","amount":477000,"raw":"477k no pet"},{"user":"monty__dew","amount":634000,"raw":"634k"},{"user":"karmas_ace","amount":876000,"raw":"876k"},{"user":"toastladyy","amount":200000,"raw":"200k"},{"user":"tumoralpayload","amount":321000,"raw":"321k jaseCasket"},{"user":"markusdud3","amount":365000,"raw":"365k"},{"user":"willmm","amount":907000,"raw":"907k"},{"user":"its_me_crvo","amount":1629000,"raw":"1629k"},{"user":"chadqt","amount":316000,"raw":"316k"},{"user":"soulbearer_","amount":278000,"raw":"278k"},{"user":"aphios_","amount":433777,"raw":"433,777"},{"user":"pinkney16","amount":219000,"raw":"219k"},{"user":"wlmao22","amount":168000,"raw":"168k jaseCasket"},{"user":"lorddongerking","amount":312611,"raw":"312611 jaseCasket"},{"user":"werclues","amount":443000,"raw":"443k jaseCasket"},{"user":"yunghundon","amount":347641,"raw":"347641"},{"user":"council_tax","amount":212000,"raw":"212k"},{"user":"raging_tobey_fitness","amount":421000,"raw":"421k"},{"user":"teitzi","amount":348684,"raw":"348,684"},{"user":"gotdankies","amount":228000,"raw":"228k jaseCasket"},{"user":"right_twix2","amount":338000,"raw":"338k"},{"user":"glynnylol","amount":1102000,"raw":"1102k"},{"user":"ooloother","amount":555500,"raw":"555.5k"},{"user":"pentodon","amount":342000,"raw":"342k"},{"user":"mintystoob","amount":423000,"raw":"423k jaseCasket"},{"user":"glassyyy_rs","amount":305000,"raw":"305k"},{"user":"lehrules","amount":420069,"raw":"420,069"},{"user":"zebrim","amount":12049000,"raw":"12049k"},{"user":"cooterlingus","amount":320000,"raw":"320k"},{"user":"deviance503","amount":396000,"raw":"396k"},{"user":"yo_mamas_good","amount":311000,"raw":"311k"},{"user":"h0wiie","amount":434000,"raw":"434k"},{"user":"time_lapsers","amount":748436,"raw":"748,436"},{"user":"mulnerd","amount":460000,"raw":"460k"},{"user":"pseudopy","amount":401500,"raw":"401,500"},{"user":"blinkosrs","amount":236000,"raw":"236k jaseCasket"},{"user":"sid_zer0","amount":523000,"raw":"523k"},{"user":"mylosas","amount":753951,"raw":"jaseCasket 753,951"},{"user":"0res","amount":2000000,"raw":"2m"},{"user":"20zs","amount":412000,"raw":"412k"},{"user":"fnoizee","amount":429283,"raw":"429,283k jaseCasket jaseCasket"},{"user":"po_ta_toe","amount":4780000,"raw":"4.78m"},{"user":"goldenboydass","amount":521131,"raw":"521,131"},{"user":"solloryx","amount":725197,"raw":"725,197"},{"user":"zrxpeterx","amount":89000,"raw":"89k"},{"user":"allokabouter","amount":366000,"raw":"366k"},{"user":"fierylegion","amount":16842000,"raw":"16.842m"},{"user":"brucerine","amount":420000,"raw":"420k"},{"user":"saqq","amount":144000,"raw":"144k"},{"user":"samsq1","amount":730000,"raw":"730k pet"},{"user":"droog_v7","amount":555000,"raw":"555k"},{"user":"oslors","amount":4300000,"raw":"jaseCasket 4.3m"},{"user":"goldenboydass","amount":129000,"raw":"129k"},{"user":"sweetnsaltytv","amount":651000,"raw":"651k"},{"user":"notcjr","amount":247000,"raw":"jaseCasket 247k"},{"user":"dschrets","amount":422000,"raw":"422k"},{"user":"zacksdash","amount":451000,"raw":"451k"}],"totalGuesses":63,"totalAmount":"66.17M","totalSmallAmount":"66.17M","averageGuess":"1.05M","averageSmallGuess":"1.05M","infoGuesses":{"normal":26,"sub":35,"mod":2},"mimicGuesses":1,"seconds":40,"bloodhoundGuesses":4,"jaseCaskets":15}
+{
+  "result": [
+    {
+      "user": "homida",
+      "amount": 100000,
+      "raw": "100k"
+    },
+    {
+      "user": "homida1",
+      "amount": 100000,
+      "raw": "100k"
+    },
+    {
+      "user": "homida2",
+      "amount": 100000,
+      "raw": "100k"
+    },
+    {
+      "user": "homida3",
+      "amount": 100000,
+      "raw": "100k"
+    },
+    {
+      "user": "homida4",
+      "amount": 100000,
+      "raw": "100k"
+    },
+    {
+      "user": "homida5",
+      "amount": 100000,
+      "raw": "100k"
+    },
+    {
+      "user": "homida6",
+      "amount": 100000,
+      "raw": "100k"
+    },
+    {
+      "user": "homida7",
+      "amount": 100000,
+      "raw": "100k"
+    },
+    {
+      "user": "homida8",
+      "amount": 100000,
+      "raw": "100k"
+    },
+    {
+      "user": "homida9",
+      "amount": 100000,
+      "raw": "100k"
+    },
+    {
+      "user": "homida10",
+      "amount": 100000,
+      "raw": "100k"
+    }
+  ],
+  "totalGuesses": 11,
+  "totalAmount": "1.10M",
+  "totalSmallAmount": "NaN",
+  "averageGuess": "100K",
+  "averageSmallGuess": "NaN",
+  "normalUserGuesses": 9,
+  "modUserGuesses": 1,
+  "subUserGuesses": 1,
+  "seconds": 0,
+  "bloodhoundGuesses": 0,
+  "jaseCaskets": 0
+}
