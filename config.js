@@ -7,7 +7,7 @@ module.exports.CONFIG = {
 	GUESS_THRESHOLD_TIMER: 5, //Seconds
 	BIG_NUMBER_IGNORE: 100000000,
 	MIN_GUESS: 1000,
-	CHANNEL_NAME: "homida",
+	CHANNEL_NAME: "hey_jase",
 	MONEY_REGEX: /^\d+$/,
 	SHORT_REGEX: /(^\d+)([k|l|m|b])$/,
 	SHORT_SPLIT_REGEX: /(^\d+)[,.]?(\d+)([k|m|b])$/,
@@ -15,7 +15,7 @@ module.exports.CONFIG = {
 	DEBUG_LOG: shouldLog,
 	RESULT_STRING: "answer:",
 	IGNORE: ["nightbot"],
-	GUESS_ENDER: ["homida"],
+	GUESS_ENDER: ["hey_jase"],
 	RESULT_ACCEPTER: ["homida"],
 	QUIT_AFTER_RESULT: shouldQuit,
 };
