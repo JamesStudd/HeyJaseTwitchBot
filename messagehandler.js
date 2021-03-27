@@ -10,6 +10,7 @@ let jaseGuess = new JaseGuess();
 let timer;
 let messageThresholdTimer;
 let canProcessGuesses = false;
+let seconds;
 
 function ShouldIgnoreMessage(tags) {
 	return GUESS_CONFIG.IGNORE.indexOf(tags.username) !== -1;
