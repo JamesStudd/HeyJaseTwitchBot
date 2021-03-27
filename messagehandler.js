@@ -82,7 +82,7 @@ exports.HandleMessage = function HandleMessage(channel, tags, message, self) {
 			canProcessGuesses = false;
 			clearTimeout(timer);
 			jaseGuess.seconds = seconds;
-			jaseGuess.WriteToFile();
+			jaseGuess.WriteToFile(message);
 			jaseGuess.ResetFully();
 		}
 	}
