@@ -11,7 +11,7 @@ I'm sure there a lot of changes that could be made, major goals would be:
 
 For the puposes of the repo I'll refer to this as a "bot", but really it's just a listener. It is entirely possible for it to post messages, just needs a slight code change (passing in an OATH token to allow a login).
 
-Please feel free to do anything with this repo, download it, use it, develop it, bin it, whatever.
+Please feel free to do anything with this repo, download it, use it, develop it, make a merge request, bin it, whatever.
 
 ## Overview - How does it (barely) work?
 This bot requires heavily on [tmi.js](https://github.com/tmijs). It connects anonymously to a twitch chat and logs each message.  
