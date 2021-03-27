@@ -17,9 +17,6 @@ client
 	.connect()
 	.then(() => {
 		console.log(`Connected to channel ${GUESS_CONFIG.CHANNEL_NAME}`);
-		if (process.argv.indexOf("test") !== -1) {
-			RunTests();
-		}
 	})
 	.catch((err) => {
 		console.log("Failed to connect");
