@@ -17,7 +17,7 @@ function ShouldIgnoreMessage(tags) {
 
 function ShouldStopGuesses(tags, message) {
 	return (
-		message.indexOf("http") &&
+		message.indexOf("TEMP") !== -1 &&
 		GUESS_CONFIG.GUESS_ENDER.indexOf(tags.username) !== -1
 	);
 }
@@ -56,7 +56,7 @@ function ProcessMessage(tags, rawMessage, checkSpecialCases = true) {
 		}
 
 		let res = util.ParseUserInputToNumber(arg);
-		if (res && res >= 1000) {
+		if (!messageContainedGuess && res && res >= GUESS_CONFIG.MIN_GUESS) {
 			guessAmount += res;
 			messageContainedGuess = true;
 		}
@@ -78,7 +78,7 @@ exports.HandleMessage = function HandleMessage(channel, tags, message, self) {
 			canProcessGuesses = false;
 			clearTimeout(timer);
 			jaseGuess.seconds = seconds;
-			jaseGuess.writeToFile();
+			jaseGuess.WriteToFile();
 			jaseGuess.ResetFully();
 		}
 	}
@@ -105,7 +105,7 @@ exports.HandleMessage = function HandleMessage(channel, tags, message, self) {
 				if (ShouldProcessBacklog()) {
 					canProcessGuesses = true;
 					console.log(
-						`Received ${GUESS_CONFIG.GUESS_THRESHOLD_AMOUNT} or more guesses in 5 seconds, probably a clue...`
+						`Received ${GUESS_CONFIG.GUESS_THRESHOLD_AMOUNT} or more guesses in ${GUESS_CONFIG.GUESS_THRESHOLD_TIMER} seconds, probably a clue...`
 					);
 					seconds = Math.ceil(
 						Date.now() / 1000 - jaseGuess.GetFirstGuessTime()
@@ -115,7 +115,7 @@ exports.HandleMessage = function HandleMessage(channel, tags, message, self) {
 					jaseGuess.ClearBacklog();
 				}
 				messageThresholdTimer = undefined;
-			}, 5000);
+			}, GUESS_CONFIG.GUESS_THRESHOLD_TIMER * 1000);
 		}
 	}
 };

@@ -75,7 +75,7 @@ module.exports = class JaseGuess {
 
 	GetFirstGuessTime = () => this.guessBacklog[0].time;
 
-	writeToFile() {
+	WriteToFile() {
 		const todayDate = new Date();
 		let result = JSON.stringify(
 			{
@@ -117,6 +117,9 @@ module.exports = class JaseGuess {
 				);
 				if (CONFIG.DEBUG_LOG) {
 					console.log(result);
+				}
+				if (CONFIG.QUIT_AFTER_RESULT) {
+					process.exit();
 				}
 			}
 		);

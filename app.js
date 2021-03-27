@@ -1,11 +1,9 @@
 // Config
 const GUESS_CONFIG = require("./config").CONFIG;
-const TEST_CASES = require("./testCases").testCases;
 
 // Imports
 const tmi = require("tmi.js");
 const messageHandler = require("./messagehandler");
-const timeout = require("./utils").timeout;
 
 const client = new tmi.Client({
 	connection: {
@@ -29,16 +27,3 @@ client
 	});
 
 client.on("message", messageHandler.HandleMessage);
-
-async function RunTests() {
-	for (let i = 0; i < TEST_CASES.length; i++) {
-		const { tags, message, delay } = TEST_CASES[i];
-		messageHandler.HandleMessage(
-			GUESS_CONFIG.CHANNEL_NAME,
-			tags,
-			message,
-			false
-		);
-		await timeout(delay * 1000);
-	}
-}

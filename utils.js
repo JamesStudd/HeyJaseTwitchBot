@@ -128,7 +128,7 @@ function PrintResult(data, actualAmount) {
 		totalSmallAmount,
 		averageGuess,
 		averageSmallGuess,
-		mimicGuesses,
+		mimics,
 		seconds,
 		bloodhoundGuesses,
 		jaseCaskets,
@@ -150,7 +150,7 @@ function PrintResult(data, actualAmount) {
 		}
 	}
 
-	let mimicGuessString = GuessToString(mimicGuesses, "mimic");
+	let mimicGuessString = GuessToString(mimics, "mimic");
 	let bhGuessString = GuessToString(bloodhoundGuesses, "bloodhound");
 	let jaseCasketString = GuessToString(
 		jaseCaskets,
