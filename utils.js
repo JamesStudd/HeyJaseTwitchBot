@@ -91,6 +91,10 @@ function ProcessResult(filename, amount) {
 	);
 }
 
+function DebugLog(message) {
+	if (CONFIG.DEBUG_LOG) console.log(message);
+}
+
 module.exports = {
 	ConvertToFormat,
 	timeout,
@@ -98,6 +102,7 @@ module.exports = {
 	GetSafeDateFormat,
 	GetMostRecentFileName,
 	ProcessResult,
+	DebugLog,
 };
 
 function GuessToString(

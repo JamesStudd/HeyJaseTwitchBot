@@ -32,7 +32,7 @@ function CreateRandomMessages(minGuess, maxGuess, amount) {
             tags: RandomTags(`homida${i}`)
         });
     }
-    testCases.push({ message: " ", delay: 0.1, tags: RandomTags(CONFIG.GUESS_ENDER[0])});
+    testCases.push({ message: "test", delay: 0.1, tags: RandomTags(CONFIG.GUESS_ENDER[0])});
     return testCases;
 }
 

@@ -8,7 +8,7 @@
     "dev-debug": "nodemon app.js log",
     "test": "jest",
     "test-watch": "jest --watch",
-    "test-messages": "node tests/messageHandlerTest.js quit"
+    "test-messages": "node tests/messageHandlerTest.js quit log"
   },
   "keywords": [],
   "author": "",

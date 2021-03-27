@@ -18,7 +18,7 @@ function ShouldIgnoreMessage(tags) {
 
 function ShouldStopGuesses(tags, message) {
 	return (
-		message.indexOf("http") !== -1 &&
+		message.indexOf("http") === -1 &&
 		GUESS_CONFIG.GUESS_ENDER.indexOf(tags.username) !== -1
 	);
 }
@@ -75,6 +75,9 @@ exports.HandleMessage = function HandleMessage(channel, tags, message, self) {
 		}
 	}
 	if (ShouldStopGuesses(tags, message)) {
+		util.DebugLog(
+			`Stopping guesses due to getting the message "${message}" from ${tags.username}`
+		);
 		if (jaseGuess.HasGuesses()) {
 			canProcessGuesses = false;
 			clearTimeout(timer);

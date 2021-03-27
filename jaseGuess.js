@@ -75,7 +75,7 @@ module.exports = class JaseGuess {
 
 	GetFirstGuessTime = () => this.guessBacklog[0].time;
 
-	WriteToFile() {
+	WriteToFile(endMessage) {
 		const todayDate = new Date();
 		let result = JSON.stringify(
 			{
@@ -97,6 +97,7 @@ module.exports = class JaseGuess {
 				jaseCaskets: this.jaseCaskets,
 				mimics: this.mimicGuesses,
 				date: todayDate,
+				endMessage,
 			},
 			null,
 			2
@@ -115,9 +116,7 @@ module.exports = class JaseGuess {
 				console.log(
 					`-------- Finished recording guesses (${todayDate.toString()}), saved file -----------`
 				);
-				if (CONFIG.DEBUG_LOG) {
-					console.log(result);
-				}
+				util.DebugLog(result);
 				if (CONFIG.QUIT_AFTER_RESULT) {
 					process.exit();
 				}
@@ -133,11 +132,9 @@ module.exports = class JaseGuess {
 			this.smallAmount += amountToAdd;
 		}
 
-		if (CONFIG.DEBUG_LOG) {
-			console.log(
-				`Received a guess from ${tags.username} for ${amountToAdd}. Message: ${rawMessage}`
-			);
-		}
+		util.DebugLog(
+			`Received a guess from ${tags.username} for ${amountToAdd}. Message: ${rawMessage}`
+		);
 
 		this.allGuesses.push({
 			user: tags.username,
