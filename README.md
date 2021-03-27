@@ -8,6 +8,8 @@ I'm sure there a lot of changes that could be made, major goals would be:
 - Making it less hacked together
 - Adding more analysis
   - Would be cool to count PepePls / JasePls / TriDance / TreeDance / pepeD and use Shazam to workout the "best" songs.
+- Save all the guesses and do some long term analysis
+  - Something like guesses per week, average viewers over time, etc.
 
 For the puposes of the repo I'll refer to this as a "bot", but really it's just a listener. It is entirely possible for it to post messages, just needs a slight code change (passing in an OATH token to allow a login).
 
