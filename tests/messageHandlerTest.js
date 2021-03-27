@@ -32,7 +32,7 @@ function CreateRandomMessages(minGuess, maxGuess, amount) {
             tags: RandomTags(`homida${i}`)
         });
     }
-    testCases.push({ message: "TEMP", delay: 0.1, tags: RandomTags(CONFIG.GUESS_ENDER[0])});
+    testCases.push({ message: " ", delay: 0.1, tags: RandomTags(CONFIG.GUESS_ENDER[0])});
     return testCases;
 }
 
@@ -68,11 +68,11 @@ function RandomTags(username) {
     
     if (RandomIntFromInterval(0, 1) > 0) tags.subscriber = true;
     if (RandomIntFromInterval(0, 10) > 9) tags["user-type"] = "mod"
-    tags.id = makeid(10);
+    tags.id = MakeID(10);
     return tags;
 }
 
-function makeid(length) {
+function MakeID(length) {
 	var result = "";
 	var characters =
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
