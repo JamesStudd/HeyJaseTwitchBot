@@ -17,7 +17,7 @@ function ShouldIgnoreMessage(tags) {
 
 function ShouldStopGuesses(tags, message) {
 	return (
-		message.indexOf("TEMP") !== -1 &&
+		message.indexOf("http") !== -1 &&
 		GUESS_CONFIG.GUESS_ENDER.indexOf(tags.username) !== -1
 	);
 }
