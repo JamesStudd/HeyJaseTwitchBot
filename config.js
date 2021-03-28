@@ -30,4 +30,6 @@ module.exports.CONFIG = {
 	GUESS_PATH: isDebug
 		? path.join(__dirname, "guesses", "debug")
 		: path.join(__dirname, "guesses"),
+	COMMAND_PREFIX: "?",
+	ADMINS: ["homida"],
 };

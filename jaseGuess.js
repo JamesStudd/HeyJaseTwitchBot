@@ -34,7 +34,7 @@ module.exports = class JaseGuess {
 		this.specialCases = [
 			{
 				title: "Mimic",
-				input: ["mimic", "Mimic"],
+				input: ["mimic"],
 				guessedThisMessage: false,
 			},
 			{
@@ -44,7 +44,7 @@ module.exports = class JaseGuess {
 			},
 			{
 				title: "Casket",
-				input: ["jaseCasket"],
+				input: ["jasecasket"],
 				guessedThisMessage: false,
 			},
 		];
@@ -105,23 +105,19 @@ module.exports = class JaseGuess {
 
 		const fileName = `guesses-${util.GetSafeDateFormat(todayDate)}.json`;
 
-		fs.writeFile(
-			path.join(__dirname, "guesses", fileName),
-			result,
-			(err) => {
-				if (err) {
-					console.log("Failed to write to file");
-					console.error(err);
-				}
-				console.log(
-					`-------- Finished recording guesses (${todayDate.toString()}), saved file -----------`
-				);
-				util.DebugLog(result);
-				if (CONFIG.QUIT_AFTER_RESULT) {
-					process.exit();
-				}
+		fs.writeFile(path.join(CONFIG.GUESS_PATH, fileName), result, (err) => {
+			if (err) {
+				console.log("Failed to write to file");
+				console.error(err);
 			}
-		);
+			console.log(
+				`-------- Finished recording guesses (${todayDate.toString()}), saved file -----------`
+			);
+			util.DebugLog(result);
+			if (CONFIG.QUIT_AFTER_RESULT) {
+				process.exit();
+			}
+		});
 		return result;
 	}
 

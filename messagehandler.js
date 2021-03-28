@@ -12,6 +12,8 @@ let messageThresholdTimer;
 let canProcessGuesses = false;
 let seconds;
 
+const messageHandlers = util.GetAllCommands();
+
 function ShouldIgnoreMessage(tags) {
 	return GUESS_CONFIG.IGNORE.indexOf(tags.username) !== -1;
 }
@@ -34,24 +36,13 @@ function ShouldProcessBacklog() {
 	);
 }
 
-function ShouldAcceptMessageAsAnswer(tags, message) {
-	if (
-		GUESS_CONFIG.RESULT_ACCEPTER.indexOf(tags.username) !== -1 &&
-		message.indexOf(GUESS_CONFIG.RESULT_STRING) !== -1
-	) {
-		const processed = ProcessMessage(tags, message, false);
-		if (processed.messageContainedGuess) {
-			return processed.guessAmount;
-		}
-	}
-}
-
 function ProcessMessage(tags, rawMessage, checkSpecialCases = true) {
 	let args = rawMessage.split(" ");
 	let messageContainedGuess = false;
 	let guessAmount = 0;
 
-	for (const arg of args) {
+	for (let arg of args) {
+		arg = arg.toLowerCase();
 		if (checkSpecialCases) {
 			jaseGuess.CheckSpecialCases(arg, tags.id);
 		}
@@ -73,18 +64,13 @@ exports.HandleMessage = function HandleMessage(
 	client
 ) {
 	if (ShouldIgnoreMessage(tags)) return;
-	if (!canProcessGuesses) {
-		const result = ShouldAcceptMessageAsAnswer(tags, message);
-		if (result) {
-			const fileName = util.GetMostRecentFileName("guesses");
-			util.ProcessResult(fileName, result)
-				.then((message) => {
-					client.say(channel, message);
-				})
-				.catch((err) => {
-					console.log("Failed to process message", err);
-					client.say(channel, "Failed :(");
-				});
+	if (message.startsWith(GUESS_CONFIG.COMMAND_PREFIX)) {
+		const args = message.slice(1).split(" ");
+		const command = args.shift().toLowerCase();
+
+		if (messageHandlers[command]) {
+			messageHandlers[command](channel, tags, args, client);
+			return;
 		}
 	}
 	if (ShouldStopGuesses(tags, message)) {

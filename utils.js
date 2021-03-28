@@ -66,12 +66,14 @@ function GetSafeDateFormat(date) {
 function GetMostRecentFileName(dir) {
 	var files = fs.readdirSync(dir);
 
-	// use underscore for max()
-	return _.max(files, function (f) {
-		var fullpath = path.join(dir, f);
+	const filtered = _.filter(files, (f) => {
+		let fullpath = path.join(dir, f);
+		return path.extname(fullpath) === ".json";
+	});
 
-		// ctime = creation time is used
-		// replace with mtime for modification time
+	// use underscore for max()
+	return _.max(filtered, function (f) {
+		var fullpath = path.join(CONFIG.GUESS_PATH, f);
 		return fs.statSync(fullpath).ctime;
 	});
 }
@@ -99,6 +101,26 @@ function DebugLog(message) {
 	if (CONFIG.DEBUG_LOG) console.log(message);
 }
 
+function GetAllCommands() {
+	const commands = {};
+
+	const commandFiles = fs
+		.readdirSync(path.join(__dirname, "MessageHandlers/Commands"))
+		.filter((file) => file.endsWith(".js"));
+
+	commandFiles.forEach((file) => {
+		const command = require(path.join(
+			__dirname,
+			`./messagehandlers/commands/${file}`
+		));
+		commands[command.name] = command.command;
+
+		console.log(`Loaded command: ${command.name}`);
+	});
+
+	return commands;
+}
+
 module.exports = {
 	ConvertToFormat,
 	timeout,
@@ -107,6 +129,7 @@ module.exports = {
 	GetMostRecentFileName,
 	ProcessResult,
 	DebugLog,
+	GetAllCommands,
 };
 
 function GuessToString(
