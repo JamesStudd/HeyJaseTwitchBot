@@ -1,4 +1,5 @@
 // Config
+require("dotenv").config();
 const GUESS_CONFIG = require("./config").CONFIG;
 
 // Imports
@@ -9,6 +10,10 @@ const client = new tmi.Client({
 	connection: {
 		secure: true,
 		reconnect: true,
+	},
+	identity: {
+		username: process.env.TWITCH_USERNAME,
+		password: process.env.TWITCH_OATH,
 	},
 	channels: [GUESS_CONFIG.CHANNEL_NAME],
 });
@@ -23,4 +28,6 @@ client
 		console.log(err);
 	});
 
-client.on("message", messageHandler.HandleMessage);
+client.on("message", (channel, tags, message, self) =>
+	messageHandler.HandleMessage(channel, tags, message, self, client)
+);

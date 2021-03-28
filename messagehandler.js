@@ -65,13 +65,26 @@ function ProcessMessage(tags, rawMessage, checkSpecialCases = true) {
 	return { messageContainedGuess, guessAmount };
 }
 
-exports.HandleMessage = function HandleMessage(channel, tags, message, self) {
+exports.HandleMessage = function HandleMessage(
+	channel,
+	tags,
+	message,
+	self,
+	client
+) {
 	if (ShouldIgnoreMessage(tags)) return;
 	if (!canProcessGuesses) {
 		const result = ShouldAcceptMessageAsAnswer(tags, message);
 		if (result) {
 			const fileName = util.GetMostRecentFileName("guesses");
-			util.ProcessResult(fileName, result);
+			util.ProcessResult(fileName, result)
+				.then((message) => {
+					client.say(channel, message);
+				})
+				.catch((err) => {
+					console.log("Failed to process message", err);
+					client.say(channel, "Failed :(");
+				});
 		}
 	}
 	if (ShouldStopGuesses(tags, message)) {

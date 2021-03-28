@@ -77,18 +77,22 @@ function GetMostRecentFileName(dir) {
 }
 
 function ProcessResult(filename, amount) {
-	fs.readFile(
-		path.join(__dirname, "guesses", filename),
-		"utf8",
-		(err, data) => {
-			if (err) {
-				console.log("Failed to read file");
-				return console.error(err);
-			}
+	return new Promise((resolve, reject) => {
+		fs.readFile(
+			path.join(__dirname, "guesses", filename),
+			"utf8",
+			(err, data) => {
+				if (err) {
+					console.log("Failed to read file");
+					reject(err);
+					return;
+				}
 
-			PrintResult(JSON.parse(data), amount);
-		}
-	);
+				let message = PrintResult(JSON.parse(data), amount);
+				resolve(message);
+			}
+		);
+	});
 }
 
 function DebugLog(message) {
@@ -178,5 +182,6 @@ function PrintResult(data, actualAmount) {
 		`${modString}, ${subString} and ${nonSubString} guessed. ` +
 		`${mimicGuessString}. ${bhGuessString}. ${jaseCasketString}.`;
 
-	console.log(post);
+	DebugLog(post);
+	return post;
 }
