@@ -4,17 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon app.js",
+    "dev": "nodemon app.js -c hey_jase",
     "dev-debug": "nodemon app.js log",
     "test": "jest",
     "test-watch": "jest --watch",
-    "test-messages": "node tests/messageHandlerTest.js quit log"
+    "test-messages": "node tests/messageHandlerTest.js quit log test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
+    "minimist": "^1.2.5",
     "tmi.js": "^1.7.5",
     "underscore": "^1.12.1"
   },
