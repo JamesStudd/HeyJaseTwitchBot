@@ -113,7 +113,11 @@ function GetAllCommands() {
 			__dirname,
 			`./messagehandlers/commands/${file}`
 		));
-		commands[command.name] = command.command;
+		commands[command.name] = {
+			execute: command.command,
+			middleware: command.middleware,
+			name: command.name,
+		};
 
 		console.log(`Loaded command: ${command.name}`);
 	});

@@ -68,8 +68,12 @@ exports.HandleMessage = function HandleMessage(
 		const args = message.slice(1).split(" ");
 		const command = args.shift().toLowerCase();
 
-		if (messageHandlers[command]) {
-			messageHandlers[command](channel, tags, args, client);
+		let handler = messageHandlers[command];
+		if (handler) {
+			util.DebugLog(`${handler.name} called by ${tags.username}.`);
+			if (!handler.middleware || handler.middleware(tags)) {
+				handler.execute(channel, tags, args, client);
+			}
 			return;
 		}
 	}
