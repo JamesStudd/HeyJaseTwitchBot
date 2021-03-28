@@ -178,6 +178,7 @@ function PrintResult(data, actualAmount) {
 		subUserGuesses,
 	} = data;
 
+	let bestGuess;
 	let winner = "";
 	let bestDiff = Number.MAX_VALUE;
 	let rawGuess;
@@ -188,6 +189,7 @@ function PrintResult(data, actualAmount) {
 			bestDiff = diff;
 			winner = guess.user;
 			rawGuess = guess.raw;
+			bestGuess = guess;
 		}
 	}
 
@@ -215,5 +217,6 @@ function PrintResult(data, actualAmount) {
 		`${mimicGuessString}. ${bhGuessString}. ${jaseCasketString}.`;
 
 	DebugLog(post);
-	return post;
+	const { userId, amount } = bestGuess;
+	return { winner, userId, post, processedGuess: amount, rawGuess };
 }
