@@ -1,7 +1,7 @@
-const mongoose = require("./../database");
+const mongoose = require("../database");
 
-let Guess = undefined;
-const guessSchema = new mongoose.Schema({
+let Winner = undefined;
+const winnerSchema = new mongoose.Schema({
 	userId: {
 		type: String,
 		required: true,
@@ -20,6 +20,6 @@ const guessSchema = new mongoose.Schema({
 	},
 });
 
-Guess = mongoose.model("Guess", guessSchema);
+Winner = mongoose.model("Winner", winnerSchema);
 
-module.exports = Guess;
+module.exports = Winner;

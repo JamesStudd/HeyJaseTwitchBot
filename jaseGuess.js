@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const CONFIG = require("./config").CONFIG;
 const util = require("./utils");
+const Result = require("./database/model/resultsSchema");
 
 module.exports = class JaseGuess {
 	constructor() {
@@ -52,49 +53,71 @@ module.exports = class JaseGuess {
 
 	HasGuesses = () => this.amount !== 0 && this.guesses !== 0;
 
-	WriteToFile() {
+	SaveResults() {
 		const todayDate = new Date();
-		let result = JSON.stringify(
-			{
-				result: this.allGuesses,
-				totalGuesses: this.guesses,
-				totalAmount: util.ConvertToFormat(this.amount),
-				totalSmallAmount: util.ConvertToFormat(this.smallAmount),
-				averageGuess: util.ConvertToFormat(
-					Math.round(this.amount / this.guesses)
-				),
-				averageSmallGuess: util.ConvertToFormat(
-					Math.round(this.smallAmount / this.guesses)
-				),
-				normalUserGuesses: this.normalUserGuesses,
-				modUserGuesses: this.modUserGuesses,
-				subUserGuesses: this.subUserGuesses,
-				seconds: this.seconds,
-				bloodhoundGuesses: this.bloodhoundGuesses,
-				jaseCaskets: this.jaseCaskets,
-				mimics: this.mimicGuesses,
-				date: todayDate,
-			},
-			null,
-			2
+
+		let data = {
+			result: this.allGuesses,
+			totalGuesses: this.guesses,
+			totalAmount: this.amount,
+			totalSmallAmount: this.smallAmount,
+			averageGuess: this.amount / this.guesses,
+			averageSmallGuess: this.smallAmount / this.guesses,
+			normalUserGuesses: this.normalUserGuesses,
+			modUserGuesses: this.modUserGuesses,
+			subUserGuesses: this.subUserGuesses,
+			seconds: this.seconds,
+			bloodhoundGuesses: this.bloodhoundGuesses,
+			jaseCaskets: this.jaseCaskets,
+			mimics: this.mimicGuesses,
+			date: todayDate,
+		};
+
+		if (!CONFIG.DEBUG) {
+			let resultsDatabase = new Result(data);
+			resultsDatabase
+				.save()
+				.then((_) => {
+					console.log("Saved results to database");
+				})
+				.catch((err) => {
+					console.log("Failed to save winner to database");
+					console.log(err);
+				});
+		}
+
+		data.totalAmount = util.ConvertToFormat(this.amount);
+		data.totalSmallAmount = util.ConvertToFormat(this.smallAmount);
+		data.averageGuess = util.ConvertToFormat(
+			Math.round(this.amount / this.guesses)
 		);
+		data.averageSmallGuess = util.ConvertToFormat(
+			Math.round(this.smallAmount / this.guesses)
+		);
+
+		let resultString = JSON.stringify(data, null, 2);
 
 		const fileName = `guesses-${util.GetSafeDateFormat(todayDate)}.json`;
 
-		fs.writeFile(path.join(CONFIG.GUESS_PATH, fileName), result, (err) => {
-			if (err) {
-				console.log("Failed to write to file");
-				console.error(err);
+		fs.writeFile(
+			path.join(CONFIG.GUESS_PATH, fileName),
+			resultString,
+			(err) => {
+				if (err) {
+					console.log("Failed to write to file");
+					console.error(err);
+				}
+				console.log(
+					`-------- Finished recording guesses (${todayDate.toString()}), saved file -----------`
+				);
+				util.DebugLog(resultString);
+				if (CONFIG.QUIT_AFTER_RESULT) {
+					process.exit();
+				}
 			}
-			console.log(
-				`-------- Finished recording guesses (${todayDate.toString()}), saved file -----------`
-			);
-			util.DebugLog(result);
-			if (CONFIG.QUIT_AFTER_RESULT) {
-				process.exit();
-			}
-		});
-		return result;
+		);
+
+		return resultString;
 	}
 
 	IncreaseCount(amountToAdd, tags, rawMessage) {

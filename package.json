@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon app.js -c hey_jase",
+    "dev": "nodemon app.js -c hey_jase log",
     "dev-debug": "nodemon app.js log",
     "test": "jest",
     "test-watch": "jest --watch",

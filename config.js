@@ -11,9 +11,6 @@ const shouldQuit = process.argv.includes("quit");
 const isDebug = process.argv.includes("test");
 
 module.exports.CONFIG = {
-	GUESS_THRESHOLD_AMOUNT: 7,
-	GUESS_THRESHOLD_AMOUNT_CORRECT: 5,
-	GUESS_THRESHOLD_TIMER: 5, //Seconds
 	BIG_NUMBER_IGNORE: 100000000,
 	MIN_GUESS: 1000,
 	CHANNEL_NAME: args.channel ?? "homida",
@@ -28,6 +25,7 @@ module.exports.CONFIG = {
 	GUESS_PATH: isDebug
 		? path.join(__dirname, "guesses", "debug")
 		: path.join(__dirname, "guesses"),
+	DEBUG: isDebug,
 	COMMAND_PREFIX: "?",
 	ADMINS: ["homida"],
 };

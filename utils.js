@@ -3,6 +3,7 @@ const CONFIG = require("./config").CONFIG;
 const fs = require("fs");
 const path = require("path");
 const _ = require("underscore");
+const Winner = require("./database/model/winnerSchema");
 
 function ConvertToFormat(number) {
 	if (isNaN(number) || number <= 0) return 0;
@@ -129,6 +130,25 @@ function AdminCommandMiddleware(tags) {
 	return CONFIG.ADMINS.includes(tags.username);
 }
 
+function SaveWinner(result) {
+	let winnerGuess = new Winner({
+		userId: result.userId,
+		processedGuess: result.processedGuess,
+		rawMessage: result.rawGuess,
+	});
+
+	winnerGuess
+		.save()
+		.then((_) => {
+			console.log("Saved winner to database");
+			console.log(winnerGuess);
+		})
+		.catch((err) => {
+			console.log("Failed to save winner to database");
+			console.log(err);
+		});
+}
+
 module.exports = {
 	ConvertToFormat,
 	timeout,
@@ -139,6 +159,7 @@ module.exports = {
 	DebugLog,
 	GetAllCommands,
 	AdminCommandMiddleware,
+	SaveWinner,
 };
 
 function GuessToString(
@@ -183,13 +204,15 @@ function PrintResult(data, actualAmount) {
 	let bestDiff = Number.MAX_VALUE;
 	let rawGuess;
 
-	for (const guess of result) {
-		let diff = Math.abs(guess.amount - actualAmount);
-		if (diff < bestDiff) {
-			bestDiff = diff;
-			winner = guess.user;
-			rawGuess = guess.raw;
-			bestGuess = guess;
+	if (actualAmount) {
+		for (const guess of result) {
+			let diff = Math.abs(guess.amount - actualAmount);
+			if (diff < bestDiff) {
+				bestDiff = diff;
+				winner = guess.user;
+				rawGuess = guess.raw;
+				bestGuess = guess;
+			}
 		}
 	}
 
@@ -210,13 +233,27 @@ function PrintResult(data, actualAmount) {
 	let secondsRounded = Math.ceil(seconds);
 
 	let post =
-		`Guesses over! The winner is ${winner} with a guess of "${rawGuess}". ` +
+		`Guesses over! ` +
 		`In ${secondsRounded} seconds there were ${totalGuesses} total guesses, adding up to ${totalAmount}. ` +
 		`Average guess was ${averageGuess}. Ignoring guesses over 100m, they added up to ${totalSmallAmount} with an average of ${averageSmallGuess}. ` +
 		`${modString}, ${subString} and ${nonSubString} guessed. ` +
 		`${mimicGuessString}. ${bhGuessString}. ${jaseCasketString}.`;
 
+	let winnerString = `The winner is ${winner} with a guess of "${rawGuess}"`;
+
 	DebugLog(post);
-	const { userId, amount } = bestGuess;
-	return { winner, userId, post, processedGuess: amount, rawGuess };
+	let userId;
+	let amount;
+	if (actualAmount) {
+		userId = bestGuess.userId;
+		amount = bestGuess.amount;
+	}
+	return {
+		winner,
+		userId,
+		post,
+		processedGuess: amount,
+		rawGuess,
+		winnerString,
+	};
 }

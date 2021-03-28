@@ -1,8 +1,7 @@
 const util = require("./../../utils");
-const Guess = require("./../../database/model/guessSchema");
 
 module.exports = {
-	name: "reward",
+	name: "findwinner",
 	help: "Gets the winner of the casket guess.",
 	middleware: util.AdminCommandMiddleware,
 	command: function (channel, tags, args, client) {
@@ -12,24 +11,8 @@ module.exports = {
 		const fileName = util.GetMostRecentFileName("guesses");
 		util.ProcessResult(fileName, parsed)
 			.then((result) => {
-				client.say(channel, result.post);
-
-				let winnerGuess = new Guess({
-					userId: result.userId,
-					processedGuess: result.processedGuess,
-					rawMessage: result.rawGuess,
-				});
-
-				winnerGuess
-					.save()
-					.then((_) => {
-						console.log("Saved winner to database");
-						console.log(winnerGuess);
-					})
-					.catch((err) => {
-						console.log("Failed to save winner to database");
-						console.log(err);
-					});
+				client.say(channel, result.winnerString);
+				util.SaveWinner(result);
 			})
 			.catch((err) => {
 				console.log("Failed to process message", err);

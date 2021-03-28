@@ -60,7 +60,7 @@ function StopGuesses() {
 		clearTimeout(timer);
 		jaseGuess.seconds = seconds;
 		seconds = 0;
-		jaseGuess.WriteToFile();
+		jaseGuess.SaveResults();
 
 		jaseGuess = new JaseGuess();
 	}
