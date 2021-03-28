@@ -6,9 +6,9 @@ const args = require("minimist")(process.argv.slice(2), {
 	},
 });
 
-const shouldLog = process.argv.indexOf("log") !== -1;
-const shouldQuit = process.argv.indexOf("quit") !== -1;
-const isDebug = process.argv.indexOf("test") !== -1;
+const shouldLog = process.argv.includes("log");
+const shouldQuit = process.argv.includes("quit");
+const isDebug = process.argv.includes("test");
 
 module.exports.CONFIG = {
 	GUESS_THRESHOLD_AMOUNT: 7,
@@ -22,9 +22,7 @@ module.exports.CONFIG = {
 	SHORT_SPLIT_REGEX: /(^\d+)[,.]?(\d+)([k|m|b])$/,
 	DATE_REGEX: /\s+|[,\/:]/g,
 	DEBUG_LOG: shouldLog,
-	RESULT_STRING: "answer:",
 	IGNORE: ["nightbot"],
-	GUESS_ENDER: ["homida"],
 	RESULT_ACCEPTER: ["homida", "hey_jase"],
 	QUIT_AFTER_RESULT: shouldQuit,
 	GUESS_PATH: isDebug

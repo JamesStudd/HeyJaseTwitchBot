@@ -8,32 +8,30 @@ const util = require("./utils");
 let jaseGuess = new JaseGuess();
 
 let timer;
-let messageThresholdTimer;
 let canProcessGuesses = false;
-let seconds;
+let seconds = 0;
 
 const messageHandlers = util.GetAllCommands();
 
+messageHandlers["stop"] = {
+	execute: StopGuesses,
+	middleware: util.AdminCommandMiddleware,
+	name: "stop",
+};
+
+messageHandlers["start"] = {
+	name: "start",
+	execute: BeginGuesses,
+	middleware: util.AdminCommandMiddleware,
+};
+
+function BeginGuesses() {
+	canProcessGuesses = true;
+	timer = setInterval(() => seconds++, 1000);
+}
+
 function ShouldIgnoreMessage(tags) {
-	return GUESS_CONFIG.IGNORE.indexOf(tags.username) !== -1;
-}
-
-function ShouldStopGuesses(tags, message) {
-	return (
-		message.indexOf("http") === -1 &&
-		GUESS_CONFIG.GUESS_ENDER.indexOf(tags.username) !== -1
-	);
-}
-
-function ShouldProcessBacklog() {
-	return (
-		jaseGuess.guessBacklog.length >= GUESS_CONFIG.GUESS_THRESHOLD_AMOUNT &&
-		jaseGuess.guessBacklog.filter(
-			(guess) =>
-				ProcessMessage(guess.tags, guess.message, false)
-					.messageContainedGuess
-		).length >= GUESS_CONFIG.GUESS_THRESHOLD_AMOUNT_CORRECT
-	);
+	return GUESS_CONFIG.IGNORE.includes(tags.username);
 }
 
 function ProcessMessage(tags, rawMessage, checkSpecialCases = true) {
@@ -56,6 +54,18 @@ function ProcessMessage(tags, rawMessage, checkSpecialCases = true) {
 	return { messageContainedGuess, guessAmount };
 }
 
+function StopGuesses() {
+	if (jaseGuess.HasGuesses()) {
+		canProcessGuesses = false;
+		clearTimeout(timer);
+		jaseGuess.seconds = seconds;
+		seconds = 0;
+		jaseGuess.WriteToFile();
+
+		jaseGuess = new JaseGuess();
+	}
+}
+
 exports.HandleMessage = function HandleMessage(
 	channel,
 	tags,
@@ -70,59 +80,19 @@ exports.HandleMessage = function HandleMessage(
 
 		let handler = messageHandlers[command];
 		if (handler) {
-			util.DebugLog(`${handler.name} called by ${tags.username}.`);
+			util.DebugLog(
+				`${handler.name} called by ${tags.username} ID (${tags["user-id"]}).`
+			);
 			if (!handler.middleware || handler.middleware(tags)) {
 				handler.execute(channel, tags, args, client);
 			}
 			return;
 		}
 	}
-	if (ShouldStopGuesses(tags, message)) {
-		util.DebugLog(
-			`Stopping guesses due to getting the message "${message}" from ${tags.username}`
-		);
-		if (jaseGuess.HasGuesses()) {
-			canProcessGuesses = false;
-			clearTimeout(timer);
-			jaseGuess.seconds = seconds;
-			jaseGuess.WriteToFile(message);
-			jaseGuess.ResetFully();
-		}
-	}
 	if (canProcessGuesses) {
-		for (const guess of jaseGuess.guessBacklog) {
-			let processed = ProcessMessage(guess.tags, guess.message);
-			if (processed.messageContainedGuess) {
-				jaseGuess.IncreaseCount(
-					processed.guessAmount,
-					guess.tags,
-					guess.message
-				);
-			}
-		}
-		jaseGuess.ClearBacklog();
 		let processed = ProcessMessage(tags, message);
 		if (processed.messageContainedGuess) {
 			jaseGuess.IncreaseCount(processed.guessAmount, tags, message);
-		}
-	} else {
-		jaseGuess.AddToBacklog(message, tags);
-		if (!messageThresholdTimer) {
-			messageThresholdTimer = setTimeout(() => {
-				if (ShouldProcessBacklog()) {
-					canProcessGuesses = true;
-					console.log(
-						`Received ${GUESS_CONFIG.GUESS_THRESHOLD_AMOUNT} or more guesses in ${GUESS_CONFIG.GUESS_THRESHOLD_TIMER} seconds, probably a clue...`
-					);
-					seconds = Math.ceil(
-						Date.now() / 1000 - jaseGuess.GetFirstGuessTime()
-					);
-					setInterval(() => seconds++, 1000);
-				} else {
-					jaseGuess.ClearBacklog();
-				}
-				messageThresholdTimer = undefined;
-			}, GUESS_CONFIG.GUESS_THRESHOLD_TIMER * 1000);
 		}
 	}
 };

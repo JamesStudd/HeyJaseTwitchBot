@@ -32,7 +32,7 @@ function CreateRandomMessages(minGuess, maxGuess, amount) {
             tags: RandomTags(`homida${i}`)
         });
     }
-    testCases.push({ message: "test", delay: 0.1, tags: RandomTags(CONFIG.GUESS_ENDER[0])});
+    testCases.push({ message: "?stop", delay: 0.1, tags: RandomTags(CONFIG.ADMINS[0])});
     return testCases;
 }
 
@@ -63,12 +63,13 @@ function RandomAffix() {
 function RandomTags(username) {
     let tags = {
         subscriber: false,
-        username
+        username,
+        id: MakeID(10),
+        "user-id": MakeNumericalID(10000000000)
     }
     
     if (RandomIntFromInterval(0, 1) > 0) tags.subscriber = true;
     if (RandomIntFromInterval(0, 10) > 9) tags["user-type"] = "mod"
-    tags.id = MakeID(10);
     return tags;
 }
 
@@ -83,4 +84,8 @@ function MakeID(length) {
 		);
 	}
 	return result;
+}
+
+function MakeNumericalID(max) {
+    return Math.floor(Math.random() * Math.floor(max));
 }

@@ -125,6 +125,10 @@ function GetAllCommands() {
 	return commands;
 }
 
+function AdminCommandMiddleware(tags) {
+	return CONFIG.ADMINS.includes(tags.username);
+}
+
 module.exports = {
 	ConvertToFormat,
 	timeout,
@@ -134,6 +138,7 @@ module.exports = {
 	ProcessResult,
 	DebugLog,
 	GetAllCommands,
+	AdminCommandMiddleware,
 };
 
 function GuessToString(

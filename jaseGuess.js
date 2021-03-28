@@ -29,7 +29,6 @@ module.exports = class JaseGuess {
 		];
 
 		this.allGuesses = [];
-		this.guessBacklog = [];
 
 		this.specialCases = [
 			{
@@ -51,31 +50,9 @@ module.exports = class JaseGuess {
 		this.cacheId;
 	}
 
-	ResetStatistics() {
-		this.allStats.forEach((element) => {
-			element = 0;
-		});
-	}
-
-	ResetFully() {
-		this.allGuesses = [];
-		this.guessBacklog = [];
-		this.ResetStatistics();
-	}
-
-	ClearBacklog() {
-		this.guessBacklog = [];
-	}
-
-	AddToBacklog(message, tags) {
-		this.guessBacklog.push({ message, time: Date.now() / 1000, tags });
-	}
-
 	HasGuesses = () => this.amount !== 0 && this.guesses !== 0;
 
-	GetFirstGuessTime = () => this.guessBacklog[0].time;
-
-	WriteToFile(endMessage) {
+	WriteToFile() {
 		const todayDate = new Date();
 		let result = JSON.stringify(
 			{
@@ -97,7 +74,6 @@ module.exports = class JaseGuess {
 				jaseCaskets: this.jaseCaskets,
 				mimics: this.mimicGuesses,
 				date: todayDate,
-				endMessage,
 			},
 			null,
 			2
@@ -136,6 +112,7 @@ module.exports = class JaseGuess {
 			user: tags.username,
 			amount: amountToAdd,
 			raw: rawMessage,
+			userId: tags["user-id"],
 		});
 
 		if (tags["user-type"] === "mod") {
